@@ -14,23 +14,47 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setUpNotification(title: "Tittel",
+                          body: "Body",
+                          hour: 20,
+                          minute: 59)
+
+        // Avslutter appen
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                exit(0)
+            }
+       }
+        
+    }
+    
+}
+
+extension UIViewController {
+  
+    func setUpNotification(title: String,
+                           body: String,
+                           hour: Int,
+                           minute: Int) {
+        
         // 1. Configuring the notification content
         let content = UNMutableNotificationContent()
-        content.title = "Weekly Staff Meeting"
-        content.body = "Every Tuesday at 2pm"
+        content.title = title
+        content.body = body
         
         // 2. Configuring a recurring date-based trigger
         // Configure the recurring date.
         var dateComponents = DateComponents()
         dateComponents.calendar = Calendar.current
         
-        dateComponents.weekday = 6  // Tuesday
-        dateComponents.hour = 20    // 19:00 hours
-        dateComponents.minute = 05 // 19:45 hours
+        dateComponents.hour = hour
+        dateComponents.minute = minute
+        
         // Create the trigger as a repeating event.
         let trigger = UNCalendarNotificationTrigger(
             dateMatching: dateComponents, repeats: true)
-
+        
         // 3. Registering the notification request
         // Create the request
         let uuidString = UUID().uuidString
@@ -45,24 +69,10 @@ class ViewController: UIViewController {
             }
             
         }
-
-        // Avslutter appen
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                exit(0)
-            }
-        }
         
     }
-  
+ 
 }
-
-
-
-
-
-
 
 
 
